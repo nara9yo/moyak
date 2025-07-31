@@ -122,6 +122,9 @@ const Header = () => {
           menu={{ items: userMenuItems }}
           placement="bottomRight"
           arrow
+          overlayStyle={{
+            marginTop: '0px', // 팝업 메뉴와 아바타 사이 간격을 최소화
+          }}
         >
           <Button
             type="text"
