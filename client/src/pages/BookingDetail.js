@@ -6,16 +6,15 @@ import {
   Button, 
   Space, 
   Tag, 
-  Modal, 
   Form, 
   Input, 
-  message,
   Popconfirm,
   Divider,
   Row,
   Col,
   Statistic,
-  Alert
+  Alert,
+  App
 } from 'antd';
 import { 
   CheckOutlined, 
@@ -36,6 +35,7 @@ const BookingDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { message, modal } = App.useApp();
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [isMobile, setIsMobile] = useState(false);
@@ -77,8 +77,8 @@ const BookingDetail = () => {
 
   // 예약 취소 뮤테이션
   const cancelBookingMutation = useMutation({
-    mutationFn: (cancellation_reason) => 
-      api.put(`/api/bookings/${id}/status`, { status: 'cancelled', cancellation_reason }),
+    mutationFn: () => 
+      api.put(`/api/bookings/${id}/cancel`),
     onSuccess: () => {
       message.success('예약이 성공적으로 취소되었습니다.');
       queryClient.invalidateQueries(['booking', id]);
@@ -112,11 +112,11 @@ const BookingDetail = () => {
 
   // 예약 취소
   const cancelBooking = () => {
-    Modal.confirm({
+    modal.confirm({
       title: '예약 취소',
       content: '정말로 이 예약을 취소하시겠습니까?',
       onOk: () => {
-        cancelBookingMutation.mutate('호스트에 의해 취소됨');
+        cancelBookingMutation.mutate();
       }
     });
   };
@@ -399,50 +399,66 @@ const BookingDetail = () => {
       </Card>
 
       {/* 상태 변경 모달 */}
-      <Modal
-        title="예약 상태 변경"
-        open={statusModalVisible}
-        onCancel={() => setStatusModalVisible(false)}
-        footer={null}
-        width={500}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleStatusSubmit}
+      {statusModalVisible && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setStatusModalVisible(false)}
         >
-          <Form.Item
-            name="status"
-            label="상태"
-            rules={[{ required: true, message: '상태를 선택해주세요.' }]}
+          <Card
+            title="예약 상태 변경"
+            style={{ width: 500, maxWidth: '90vw' }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <Input disabled />
-          </Form.Item>
-
-          <Form.Item
-            name="cancellation_reason"
-            label="거절/취소 사유"
-            rules={[{ required: true, message: '사유를 입력해주세요.' }]}
-          >
-            <TextArea rows={4} placeholder="거절 또는 취소 사유를 입력해주세요." />
-          </Form.Item>
-
-          <Form.Item>
-            <Space>
-              <Button 
-                type="primary" 
-                htmlType="submit" 
-                loading={updateBookingStatusMutation.isPending}
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleStatusSubmit}
+            >
+              <Form.Item
+                name="status"
+                label="상태"
+                rules={[{ required: true, message: '상태를 선택해주세요.' }]}
               >
-                변경
-              </Button>
-              <Button onClick={() => setStatusModalVisible(false)}>
-                취소
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
+                <Input disabled />
+              </Form.Item>
+
+              <Form.Item
+                name="cancellation_reason"
+                label="거절/취소 사유"
+                rules={[{ required: true, message: '사유를 입력해주세요.' }]}
+              >
+                <TextArea rows={4} placeholder="거절 또는 취소 사유를 입력해주세요." />
+              </Form.Item>
+
+              <Form.Item>
+                <Space>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    loading={updateBookingStatusMutation.isPending}
+                  >
+                    변경
+                  </Button>
+                  <Button onClick={() => setStatusModalVisible(false)}>
+                    취소
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

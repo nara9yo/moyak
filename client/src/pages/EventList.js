@@ -261,6 +261,23 @@ const EventList = () => {
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <div>로딩 중...</div>
         </div>
+      ) : events.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <div style={{ fontSize: '16px', color: '#666', marginBottom: '16px' }}>
+            아직 생성된 이벤트가 없습니다.
+          </div>
+          <div style={{ color: '#999', marginBottom: '24px' }}>
+            첫 번째 이벤트를 생성하고 예약 링크를 공유해보세요.
+          </div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/events/create')}
+            size="large"
+          >
+            이벤트 생성하기
+          </Button>
+        </div>
       ) : (
         <>
           {/* 데스크톱 테이블 뷰 */}

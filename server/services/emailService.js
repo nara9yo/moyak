@@ -414,8 +414,8 @@ const sendBookingNotification = async (booking, event, status = 'new') => {
         <p style="color: #666; margin-bottom: 20px;">
           예약을 확인하고 확정 또는 거절해주세요.
         </p>
-        <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/bookings" class="button">
-          📋 예약 관리하기
+        <a href="${process.env.CLIENT_URL || 'http://localhost:3000'}/bookings/${booking.id}" class="button">
+          📋 예약 상세보기
         </a>
       </div>
     `;

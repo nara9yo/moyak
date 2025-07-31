@@ -66,26 +66,13 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // 이벤트 생성 (인증 필요)
-router.post('/', [
+router.post('/', auth, [
   body('title').notEmpty().withMessage('이벤트 제목을 입력해주세요.'),
   body('duration').isInt({ min: 5, max: 480 }).withMessage('시간은 5분에서 480분 사이여야 합니다.'),
   body('location_type').isIn(['online', 'phone', 'in_person']).withMessage('유효하지 않은 장소 유형입니다.')
 ], async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -149,22 +136,9 @@ router.post('/', [
 });
 
 // 이벤트 수정 (인증 필요)
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
