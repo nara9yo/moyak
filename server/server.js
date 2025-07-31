@@ -10,7 +10,6 @@ const bookingRoutes = require('./routes/bookings');
 const userRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
 const calendarRoutes = require('./routes/calendar');
-const uploadRoutes = require('./routes/upload');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -46,8 +45,7 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// 정적 파일 서빙 (업로드된 파일들)
-app.use('/uploads', express.static('uploads'));
+
 
 // 라우트
 app.use('/api/auth', authRoutes);
@@ -56,7 +54,6 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/calendar', calendarRoutes);
-app.use('/api/upload', uploadRoutes);
 
 // 헬스 체크
 app.get('/api/health', (req, res) => {

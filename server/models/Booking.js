@@ -15,6 +15,14 @@ const Booking = sequelize.define('Booking', {
       key: 'id'
     }
   },
+  user_id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id'
+    }
+  },
   guest_name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -68,6 +76,9 @@ const Booking = sequelize.define('Booking', {
   indexes: [
     {
       fields: ['event_id', 'scheduled_at']
+    },
+    {
+      fields: ['user_id']
     },
     {
       fields: ['guest_email']

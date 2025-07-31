@@ -86,6 +86,7 @@ async function initializeDatabase() {
     const sampleBookings = [
       {
         event_id: sampleEvent.id,
+        user_id: adminUser.id,
         guest_name: '김철수',
         guest_email: 'kim@example.com',
         guest_phone: '010-1234-5678',
@@ -97,6 +98,7 @@ async function initializeDatabase() {
       },
       {
         event_id: sampleEvent.id,
+        user_id: adminUser.id,
         guest_name: '이영희',
         guest_email: 'lee@example.com',
         guest_phone: '010-9876-5432',
