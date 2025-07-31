@@ -7,22 +7,9 @@ const dayjs = require('dayjs');
 const router = express.Router();
 
 // 대시보드 통계 데이터 조회
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const now = dayjs();
 

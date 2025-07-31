@@ -7,22 +7,9 @@ const { sendBookingNotification } = require('../services/emailService');
 const router = express.Router();
 
 // 예약 목록 조회
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const bookings = await Booking.findAll({
       include: [
@@ -44,22 +31,9 @@ router.get('/', async (req, res) => {
 });
 
 // 예약 상세 조회
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const booking = await Booking.findOne({
       where: { id: req.params.id },
@@ -99,8 +73,16 @@ router.post('/', [
 
     const { event_id, guest_name, guest_email, guest_phone, scheduled_at, notes, timezone } = req.body;
 
-    // 이벤트 조회
-    const event = await Event.findByPk(event_id);
+    // 이벤트 조회 (호스트 정보 포함)
+    const event = await Event.findByPk(event_id, {
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email']
+        }
+      ]
+    });
     if (!event || !event.is_active) {
       return res.status(404).json({ message: '이벤트를 찾을 수 없습니다.' });
     }
@@ -169,13 +151,22 @@ router.put('/:id/status', auth, [
 
     const { status, cancellation_reason } = req.body;
 
+    const userId = req.user.id;
+
     const booking = await Booking.findOne({
       where: { id: req.params.id },
       include: [
         {
           model: Event,
           as: 'event',
-          where: { user_id: req.user.id }
+          where: { user_id: userId },
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'name', 'email']
+            }
+          ]
         }
       ]
     });
@@ -210,13 +201,22 @@ router.put('/:id/status', auth, [
 // 예약 취소 (인증 필요)
 router.put('/:id/cancel', auth, async (req, res) => {
   try {
+    const userId = req.user.id;
+
     const booking = await Booking.findOne({
       where: { id: req.params.id },
       include: [
         {
           model: Event,
           as: 'event',
-          where: { user_id: req.user.id }
+          where: { user_id: userId },
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'name', 'email']
+            }
+          ]
         }
       ]
     });

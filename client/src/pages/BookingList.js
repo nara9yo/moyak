@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, Space, Tag, Table, Modal, Form, Input, Select, message, Typography, Row, Col } from 'antd';
+import { Card, Button, Space, Tag, Table, Modal, Form, Input, Select, Typography, Row, Col, App } from 'antd';
 import { EyeOutlined, CheckOutlined, CloseOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ const { Option } = Select;
 const BookingList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [form] = Form.useForm();

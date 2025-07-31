@@ -7,22 +7,9 @@ const dayjs = require('dayjs');
 const router = express.Router();
 
 // 이벤트 목록 조회
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const events = await Event.findAll({
       where: { user_id: userId },
@@ -44,22 +31,9 @@ router.get('/', async (req, res) => {
 });
 
 // 이벤트 상세 조회
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const event = await Event.findOne({
       where: { 
@@ -266,22 +240,9 @@ router.put('/:id', async (req, res) => {
 });
 
 // 이벤트 삭제 (인증 필요)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const event = await Event.findOne({
       where: { 
@@ -349,26 +310,13 @@ router.get('/public/:bookingLink', async (req, res) => {
 });
 
 // 가용 시간 추가 (인증 필요)
-router.post('/:id/availability', [
+router.post('/:id/availability', auth, [
   body('day_of_week').isInt({ min: 0, max: 6 }).withMessage('요일은 0-6 사이의 숫자여야 합니다.'),
   body('start_time').notEmpty().withMessage('시작 시간을 입력해주세요.'),
   body('end_time').notEmpty().withMessage('종료 시간을 입력해주세요.')
 ], async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -409,22 +357,9 @@ router.post('/:id/availability', [
 });
 
 // 가용 시간 삭제 (인증 필요)
-router.delete('/:eventId/availability/:availabilityId', async (req, res) => {
+router.delete('/:eventId/availability/:availabilityId', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let userId = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 첫 번째 사용자 또는 기본값 사용
-      const firstUser = await User.findOne();
-      userId = firstUser ? firstUser.id : 1;
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      userId = req.user.id;
-    }
+    const userId = req.user.id;
 
     // 이벤트 존재 확인 및 소유권 확인
     const event = await Event.findOne({

@@ -1,8 +1,5 @@
 import axios from 'axios';
 
-// 개발 모드 확인
-const isDevelopment = process.env.NODE_ENV === 'development';
-
 // API 기본 설정
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
@@ -18,21 +15,6 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // 개발 모드에서 현재 사용자 이메일을 헤더에 추가
-    if (isDevelopment) {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          const user = JSON.parse(userStr);
-          if (user.email) {
-            config.headers['x-user-email'] = user.email;
-          }
-        } catch (e) {
-          // JSON 파싱 오류 무시
-        }
-      }
     }
 
     return config;

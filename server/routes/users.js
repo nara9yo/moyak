@@ -6,31 +6,9 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // 사용자 프로필 조회
-router.get('/profile', async (req, res) => {
+router.get('/profile', auth, async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let user = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 요청 헤더에서 사용자 이메일 확인
-      const userEmail = req.headers['x-user-email'];
-      if (userEmail) {
-        user = await User.findOne({ where: { email: userEmail } });
-      }
-      // 이메일이 없거나 사용자를 찾지 못한 경우 첫 번째 사용자 사용
-      if (!user) {
-        user = await User.findOne();
-      }
-      if (!user) {
-        return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
-      }
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      user = req.user;
-    }
+    const user = req.user;
 
     res.json({ user: user.toJSON() });
   } catch (error) {
@@ -40,39 +18,17 @@ router.get('/profile', async (req, res) => {
 });
 
 // 사용자 프로필 수정 (인증 필요)
-router.put('/profile', [
+router.put('/profile', auth, [
   body('name').optional().isString().withMessage('이름은 문자열이어야 합니다.'),
   body('timezone').optional().isString().withMessage('시간대는 문자열이어야 합니다.')
 ], async (req, res) => {
   try {
-    // 개발 모드에서는 인증 없이 접근 허용
-    let user = null;
-    
-    if (process.env.NODE_ENV === 'development') {
-      // 개발 모드에서는 요청 헤더에서 사용자 이메일 확인
-      const userEmail = req.headers['x-user-email'];
-      if (userEmail) {
-        user = await User.findOne({ where: { email: userEmail } });
-      }
-      // 이메일이 없거나 사용자를 찾지 못한 경우 첫 번째 사용자 사용
-      if (!user) {
-        user = await User.findOne();
-      }
-      if (!user) {
-        return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
-      }
-    } else {
-      // 프로덕션 모드에서는 인증 필요
-      if (!req.user) {
-        return res.status(401).json({ message: '인증이 필요합니다.' });
-      }
-      user = req.user;
-    }
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+
+    const user = req.user;
 
     const { name, timezone, google_calendar_id, outlook_calendar_id } = req.body;
 
