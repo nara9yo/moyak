@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Avatar, Dropdown, Button, Space, Typography } from 'antd';
-import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import { Layout, Avatar, Dropdown, Button, Space, Typography, Tooltip } from 'antd';
+import { 
+  UserOutlined, 
+  LogoutOutlined, 
+  SunOutlined, 
+  MoonOutlined 
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const { isDarkMode, toggleTheme, colors } = useTheme();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -37,12 +44,6 @@ const Header = () => {
       onClick: () => navigate('/profile'),
     },
     {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: '설정',
-      onClick: () => navigate('/profile'),
-    },
-    {
       type: 'divider',
     },
     {
@@ -59,22 +60,28 @@ const Header = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: '#fff',
-        padding: isMobile ? '0 16px 0 60px' : '0 24px', // 모바일에서 왼쪽 여백 추가
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        background: colors.surface,
+        color: colors.text,
+        padding: isMobile ? '0 16px 0 60px' : '0 24px',
+        boxShadow: colors.shadow,
         zIndex: 1000,
         height: '64px',
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
+        borderBottom: `1px solid ${colors.border}`,
       }}
+      className="theme-transition"
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Text
           style={{
             margin: 0,
-            color: '#1890ff',
+            background: colors.gradient,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
             fontSize: '24px',
             fontWeight: 'bold',
             cursor: 'pointer',
@@ -87,7 +94,30 @@ const Header = () => {
         </Text>
       </div>
 
-      <Space>
+      <Space size="middle">
+        {/* 다크모드 토글 버튼 */}
+        <Tooltip title={isDarkMode ? '라이트모드로 전환' : '다크모드로 전환'}>
+          <Button
+            type="text"
+            icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
+            onClick={toggleTheme}
+            style={{
+              color: colors.text,
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              boxShadow: 'none',
+            }}
+            className="modern-button"
+          />
+        </Tooltip>
+
+        {/* 사용자 메뉴 */}
         <Dropdown
           menu={{ items: userMenuItems }}
           placement="bottomRight"
@@ -101,7 +131,13 @@ const Header = () => {
               gap: '8px',
               height: 'auto',
               padding: '8px 12px',
+              color: colors.text,
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '8px',
+              boxShadow: 'none',
             }}
+            className="modern-button"
           >
             <Avatar
               size="small"

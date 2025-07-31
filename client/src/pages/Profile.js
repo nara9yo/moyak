@@ -1,17 +1,45 @@
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, Row, Col, Avatar, message, Divider, Typography, Space } from 'antd';
+import { Card, Form, Input, Button, Row, Col, Avatar, Divider, Typography, Space, Select, App, Modal } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 const Profile = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const queryClient = useQueryClient();
+  const { message, modal } = App.useApp();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
+  const [passwordForm] = Form.useForm();
+
+  // 시간대 옵션
+  const timezoneOptions = [
+    { value: 'Asia/Seoul', label: '한국 표준시 (KST) - 서울' },
+    { value: 'Asia/Tokyo', label: '일본 표준시 (JST) - 도쿄' },
+    { value: 'Asia/Shanghai', label: '중국 표준시 (CST) - 상하이' },
+    { value: 'Asia/Singapore', label: '싱가포르 표준시 (SGT) - 싱가포르' },
+    { value: 'America/New_York', label: '동부 표준시 (EST) - 뉴욕' },
+    { value: 'America/Chicago', label: '중부 표준시 (CST) - 시카고' },
+    { value: 'America/Denver', label: '산악 표준시 (MST) - 덴버' },
+    { value: 'America/Los_Angeles', label: '태평양 표준시 (PST) - 로스앤젤레스' },
+    { value: 'Europe/London', label: '그리니치 표준시 (GMT) - 런던' },
+    { value: 'Europe/Paris', label: '중앙 유럽 표준시 (CET) - 파리' },
+    { value: 'Europe/Berlin', label: '중앙 유럽 표준시 (CET) - 베를린' },
+    { value: 'Australia/Sydney', label: '호주 동부 표준시 (AEST) - 시드니' },
+    { value: 'Pacific/Auckland', label: '뉴질랜드 표준시 (NZST) - 오클랜드' }
+  ];
+
+  // 시간대 표시 텍스트 가져오기
+  const getTimezoneLabel = (timezoneValue) => {
+    const option = timezoneOptions.find(opt => opt.value === timezoneValue);
+    return option ? option.label : timezoneValue || 'Asia/Seoul';
+  };
 
   // 사용자 프로필 조회
   const { data: profile, isLoading, error } = useQuery({
@@ -40,7 +68,19 @@ const Profile = () => {
     mutationFn: (data) => api.put('/api/auth/change-password', data),
     onSuccess: () => {
       message.success('비밀번호가 성공적으로 변경되었습니다.');
-      form.resetFields(['current_password', 'new_password', 'confirm_password']);
+      passwordForm.resetFields(['current_password', 'new_password', 'confirm_password']);
+      
+      // 확인창 표시 후 로그아웃
+      modal.confirm({
+        title: '비밀번호 변경 완료',
+        content: '비밀번호가 성공적으로 변경되었습니다. 변경된 비밀번호로 다시 로그인해주세요.',
+        okText: '확인',
+        cancelButtonProps: { style: { display: 'none' } },
+        onOk: () => {
+          logout();
+          navigate('/login');
+        }
+      });
     },
     onError: (error) => {
       message.error(error.response?.data?.message || '비밀번호 변경 중 오류가 발생했습니다.');
@@ -52,7 +92,7 @@ const Profile = () => {
     if (profile) {
       form.setFieldsValue({
         name: profile.name,
-        timezone: profile.timezone,
+        timezone: profile.timezone || 'Asia/Seoul',
         google_calendar_id: profile.google_calendar_id,
         outlook_calendar_id: profile.outlook_calendar_id
       });
@@ -73,7 +113,12 @@ const Profile = () => {
 
   // 비밀번호 변경 제출
   const handlePasswordSubmit = (values) => {
-    changePasswordMutation.mutate(values);
+    // 클라이언트 필드명을 서버가 기대하는 필드명으로 변환
+    const serverData = {
+      currentPassword: values.current_password,
+      newPassword: values.new_password
+    };
+    changePasswordMutation.mutate(serverData);
   };
 
   if (isLoading) {
@@ -165,7 +210,7 @@ const Profile = () => {
                   <Col xs={24} sm={12}>
                     <div style={{ marginBottom: 16 }}>
                       <Text strong>시간대:</Text>
-                      <div style={{ marginTop: '4px' }}>{profile.timezone || 'Asia/Seoul'}</div>
+                      <div style={{ marginTop: '4px' }}>{getTimezoneLabel(profile.timezone)}</div>
                     </div>
                   </Col>
                   <Col xs={24} sm={12}>
@@ -220,7 +265,11 @@ const Profile = () => {
                       label="시간대"
                       rules={[{ required: true, message: '시간대를 선택해주세요.' }]}
                     >
-                      <Input defaultValue="Asia/Seoul" />
+                      <Select
+                        placeholder="시간대를 선택해주세요."
+                        style={{ width: '100%' }}
+                        options={timezoneOptions}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -268,6 +317,7 @@ const Profile = () => {
 
       <Card title="비밀번호 변경" size="small">
         <Form
+          form={passwordForm}
           layout="vertical"
           onFinish={handlePasswordSubmit}
         >

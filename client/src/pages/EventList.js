@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button, Space, Tag, Table, Popconfirm, message, Typography, Row, Col } from 'antd';
+import { Card, Button, Space, Tag, Table, Popconfirm, Typography, Row, Col, App } from 'antd';
 import { EditOutlined, DeleteOutlined, CopyOutlined, PlusOutlined, EyeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ const { Title, Text } = Typography;
 const EventList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
 
   const { data: eventsData, isLoading } = useQuery({
     queryKey: ['events'],
@@ -145,10 +146,9 @@ const EventList = () => {
           >
             <Button
               type="text"
-              danger
               icon={<DeleteOutlined />}
               size="small"
-              style={{ padding: '4px 8px' }}
+              style={{ padding: '4px 8px', color: '#ff4d4f' }}
             >
               <span className="hidden-xs">삭제</span>
             </Button>
@@ -158,14 +158,14 @@ const EventList = () => {
     }
   ];
 
-  // 모바일용 카드 뷰
   const renderMobileCard = (event) => (
     <Card
       key={event.id}
-      size="small"
-      style={{ marginBottom: '12px' }}
+      style={{ marginBottom: 16 }}
+      className="modern-card"
       actions={[
         <Button
+          key="view"
           type="text"
           icon={<EyeOutlined />}
           onClick={() => navigate(`/events/${event.id}`)}
@@ -174,6 +174,7 @@ const EventList = () => {
           보기
         </Button>,
         <Button
+          key="edit"
           type="text"
           icon={<EditOutlined />}
           onClick={() => navigate(`/events/${event.id}`)}
@@ -182,6 +183,7 @@ const EventList = () => {
           수정
         </Button>,
         <Button
+          key="link"
           type="text"
           icon={<CopyOutlined />}
           onClick={() => copyBookingLink(event.booking_link)}
@@ -190,6 +192,7 @@ const EventList = () => {
           링크
         </Button>,
         <Popconfirm
+          key="delete"
           title="이벤트 삭제"
           description="정말로 이 이벤트를 삭제하시겠습니까?"
           onConfirm={() => deleteEventMutation.mutate(event.id)}
@@ -198,106 +201,90 @@ const EventList = () => {
         >
           <Button
             type="text"
-            danger
             icon={<DeleteOutlined />}
             size="small"
+            style={{ color: '#ff4d4f' }}
           >
             삭제
           </Button>
         </Popconfirm>
       ]}
     >
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-          <Title level={5} style={{ margin: 0, flex: 1 }}>{event.title}</Title>
-          <Tag color={event.is_active ? 'green' : 'red'} style={{ marginLeft: '8px' }}>
-            {event.is_active ? '활성' : '비활성'}
-          </Tag>
-        </div>
-        
+      <div style={{ marginBottom: 8 }}>
+        <Title level={5} style={{ margin: 0, marginBottom: 4 }}>
+          {event.title}
+        </Title>
         {event.description && (
-          <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+          <Text type="secondary" style={{ fontSize: '12px' }}>
             {event.description.length > 100 
               ? `${event.description.substring(0, 100)}...` 
               : event.description
             }
           </Text>
         )}
-        
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
-          <Tag color="blue">{event.duration}분</Tag>
-          {(() => {
-            const location = getLocationText(event.location_type);
-            return <Tag color={location.color}>{location.text}</Tag>;
-          })()}
-        </div>
-        
-        <Text type="secondary" style={{ fontSize: '12px' }}>
-          생성일: {dayjs(event.created_at).format('YYYY-MM-DD')}
-        </Text>
+      </div>
+      
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+        <Tag color="blue">{event.duration}분</Tag>
+        {(() => {
+          const location = getLocationText(event.location_type);
+          return <Tag color={location.color}>{location.text}</Tag>;
+        })()}
+        <Tag color={event.is_active ? 'green' : 'red'}>
+          {event.is_active ? '활성' : '비활성'}
+        </Tag>
+      </div>
+      
+      <div style={{ fontSize: '12px', color: '#666' }}>
+        생성일: {dayjs(event.created_at).format('YYYY-MM-DD')}
       </div>
     </Card>
   );
 
   return (
-    <div style={{ padding: '0 16px' }}>
-      <div style={{ marginBottom: '24px' }}>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0 }}>
           이벤트 관리
         </Title>
-        <Text type="secondary">
-          생성한 이벤트들을 관리하고 예약 링크를 공유하세요.
-        </Text>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate('/events/create')}
+          className="modern-button"
+        >
+          이벤트 생성
+        </Button>
       </div>
 
-      <Card
-        title="이벤트 목록"
-        extra={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => navigate('/events/create')}
-            size="large"
-          >
-            <span className="hidden-xs">새 이벤트 생성</span>
-            <span className="visible-xs">생성</span>
-          </Button>
-        }
-        size="small"
-      >
-        {/* 데스크톱: 테이블 뷰, 모바일: 카드 뷰 */}
-        <div className="hidden-xs hidden-sm">
-          <Table
-            columns={columns}
-            dataSource={events}
-            loading={isLoading}
-            rowKey="id"
-            pagination={{
-              pageSize: 10,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              showTotal: (total, range) => `${range[0]}-${range[1]} / 총 ${total}개`,
-              responsive: true,
-            }}
-          />
+      {isLoading ? (
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <div>로딩 중...</div>
         </div>
-        
-        <div className="visible-xs visible-sm">
-          {isLoading ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
-              로딩 중...
-            </div>
-          ) : events.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-              생성된 이벤트가 없습니다.
-            </div>
-          ) : (
-            <div>
-              {events.map(renderMobileCard)}
-            </div>
-          )}
-        </div>
-      </Card>
+      ) : (
+        <>
+          {/* 데스크톱 테이블 뷰 */}
+          <div className="hidden-xs">
+            <Table
+              columns={columns}
+              dataSource={events}
+              rowKey="id"
+              pagination={{
+                pageSize: 10,
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total, range) => `${range[0]}-${range[1]} / 총 ${total}개`,
+              }}
+              className="modern-card"
+            />
+          </div>
+
+          {/* 모바일 카드 뷰 */}
+          <div className="visible-xs">
+            {events.map(renderMobileCard)}
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -10,12 +10,14 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { colors } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -92,72 +94,64 @@ const Sidebar = () => {
             top: '12px',
             left: '12px',
             zIndex: 1001,
-            background: 'transparent',
-            border: 'none',
-            borderRadius: '0',
-            boxShadow: 'none',
-            color: '#666',
+            background: colors.surface,
+            border: `1px solid ${colors.border}`,
+            borderRadius: '8px',
+            boxShadow: colors.shadow,
+            color: colors.text,
             fontSize: '18px',
             width: '40px',
             height: '40px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 0.2s ease',
           }}
-          onMouseEnter={(e) => {
-            e.target.style.background = '#f5f5f5';
-            e.target.style.color = '#1890ff';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'transparent';
-            e.target.style.color = '#666';
-          }}
+          className="modern-button"
         />
+
         <Drawer
-          placement="left"
-          onClose={() => setMobileOpen(false)}
-          open={mobileOpen}
-          width={250}
-          closable={false}
-          title={null}
-          extra={
+          title={
             <div style={{ 
-              fontSize: '16px', 
-              fontWeight: '600', 
-              color: '#262626',
-              paddingLeft: '40px',
-              width: '100%',
-              textAlign: 'left'
+              paddingLeft: '40px', 
+              width: '100%', 
+              textAlign: 'left',
+              color: colors.text,
+              fontWeight: 'bold',
             }}>
               메뉴
             </div>
           }
+          placement="left"
+          onClose={() => setMobileOpen(false)}
+          open={mobileOpen}
+          width={280}
           styles={{
-            body: { 
-              padding: 0,
-              paddingTop: '40px', // 메뉴 아이콘과 겹치지 않도록 상단 패딩 추가
+            header: {
+              background: colors.surface,
+              borderBottom: `1px solid ${colors.border}`,
             },
-            header: { 
-              background: '#fff',
-              borderBottom: '1px solid #f0f0f0',
-              padding: '16px 24px',
+            body: {
+              background: colors.surface,
+              padding: 0,
             },
             wrapper: {
               zIndex: 1002,
-            }
+            },
           }}
+          className="theme-transition"
         >
           <Menu
             mode="inline"
             selectedKeys={[getSelectedKey()]}
-            style={{
-              height: '100%',
-              borderRight: 0,
-              paddingTop: '16px',
-            }}
             items={menuItems}
             onClick={handleMenuClick}
+            style={{
+              background: colors.surface,
+              color: colors.text,
+              border: 'none',
+              paddingTop: '40px',
+            }}
+            className="theme-transition"
           />
         </Drawer>
       </>
@@ -169,27 +163,30 @@ const Sidebar = () => {
     <Sider
       width={250}
       style={{
-        background: '#fff',
-        borderRight: '1px solid #f0f0f0',
+        background: colors.surface,
+        borderRight: `1px solid ${colors.border}`,
         position: 'fixed',
+        height: '100vh',
         left: 0,
-        top: 64, // 헤더 높이
-        height: 'calc(100vh - 64px)',
-        zIndex: 1000,
+        top: 0,
+        zIndex: 999,
+        paddingTop: '64px',
+        boxShadow: colors.shadow,
       }}
-      breakpoint="lg"
-      collapsedWidth="0"
+      className="theme-transition"
     >
       <Menu
         mode="inline"
         selectedKeys={[getSelectedKey()]}
-        style={{
-          height: '100%',
-          borderRight: 0,
-          paddingTop: '16px',
-        }}
         items={menuItems}
         onClick={handleMenuClick}
+        style={{
+          background: colors.surface,
+          color: colors.text,
+          border: 'none',
+          height: '100%',
+        }}
+        className="theme-transition"
       />
     </Sider>
   );

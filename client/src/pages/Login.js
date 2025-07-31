@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, Divider, Space, Alert, Collapse } from 'antd';
+import { Form, Input, Button, Card, Typography, Divider, Space, Alert, Collapse, App } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,6 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   const from = location.state?.from?.pathname || '/dashboard';
 
@@ -21,21 +22,11 @@ const Login = () => {
       const result = await login(values.email, values.password);
       if (result.success) {
         navigate(from, { replace: true });
+      } else {
+        message.error(result.error || '로그인에 실패했습니다.');
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 테스트용 계정으로 빠른 로그인
-  const quickLogin = async (email, password) => {
-    form.setFieldsValue({ email, password });
-    setLoading(true);
-    try {
-      const result = await login(email, password);
-      if (result.success) {
-        navigate(from, { replace: true });
-      }
+    } catch (error) {
+      message.error('로그인 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -48,20 +39,16 @@ const Login = () => {
       label: (
         <Space>
           <InfoCircleOutlined style={{ color: '#1890ff' }} />
-          <Text strong>테스트용 계정 정보</Text>
+          <Text strong>테스트 계정 정보</Text>
         </Space>
       ),
       children: (
         <div>
           <Alert
-            message="프론트엔드 테스트용 계정"
+            message="테스트 계정 정보"
             description={
               <div>
-                <p><strong>관리자 계정:</strong></p>
-                <p>이메일: admin@moyak.com</p>
-                <p>비밀번호: admin123</p>
-                <br />
-                <p><strong>일반 사용자 계정:</strong></p>
+                <p><strong>테스트 계정:</strong></p>
                 <p>이메일: user@moyak.com</p>
                 <p>비밀번호: user123</p>
               </div>
@@ -70,25 +57,6 @@ const Login = () => {
             showIcon
             style={{ marginBottom: '16px' }}
           />
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Button 
-              type="primary" 
-              ghost 
-              onClick={() => quickLogin('admin@moyak.com', 'admin123')}
-              loading={loading}
-              style={{ width: '100%' }}
-            >
-              관리자로 빠른 로그인
-            </Button>
-            <Button 
-              type="default" 
-              onClick={() => quickLogin('user@moyak.com', 'user123')}
-              loading={loading}
-              style={{ width: '100%' }}
-            >
-              일반 사용자로 빠른 로그인
-            </Button>
-          </Space>
         </div>
       )
     }
@@ -134,7 +102,15 @@ const Login = () => {
             모두의 약속을 더 쉽게
           </Text>
         </div>
-
+        
+        <div style={{ marginTop: '24px' }}>
+          <Collapse
+            items={collapseItems}
+            size="small"
+            ghost
+          />
+        </div>
+        
         <Form
           form={form}
           layout="vertical"
@@ -189,14 +165,6 @@ const Login = () => {
               회원가입
             </Link>
           </Text>
-        </div>
-
-        <div style={{ marginTop: '24px' }}>
-          <Collapse
-            items={collapseItems}
-            size="small"
-            ghost
-          />
         </div>
       </Card>
     </div>

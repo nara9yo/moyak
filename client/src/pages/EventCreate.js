@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, InputNumber, Button, Card, Typography, Space, TimePicker, Switch, message, Row, Col } from 'antd';
+import { Form, Input, Select, InputNumber, Button, Card, Typography, Space, TimePicker, Switch, Row, Col, App } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ const EventCreate = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
 
   const createEventMutation = useMutation({
@@ -244,7 +245,10 @@ const EventCreate = () => {
             label="이벤트 활성화"
             valuePropName="checked"
           >
-            <Switch />
+            <Switch
+              checkedChildren="활성"
+              unCheckedChildren="비활성"
+            />
           </Form.Item>
 
           {/* 가용 시간 설정 */}

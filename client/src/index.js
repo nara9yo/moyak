@@ -9,6 +9,7 @@ import 'dayjs/locale/ko';
 import 'antd/dist/reset.css';
 import './index.css';
 import App from './App';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // dayjs 한국어 설정
 dayjs.locale('ko');
@@ -27,11 +28,13 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider locale={koKR}>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <App />
-        </BrowserRouter>
-      </ConfigProvider>
+      <ThemeProvider>
+        <ConfigProvider locale={koKR}>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <App />
+          </BrowserRouter>
+        </ConfigProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>
 ); 

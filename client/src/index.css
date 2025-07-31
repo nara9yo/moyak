@@ -1,3 +1,4 @@
+/* 전역 스타일 */
 * {
   margin: 0;
   padding: 0;
@@ -10,33 +11,159 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+  transition: all 0.3s ease;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-/* 커스텀 스크롤바 */
+/* 스크롤바 스타일링 */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #94a3b8;
 }
 
-/* 전역 유틸리티 클래스 */
+/* 다크모드 스크롤바 */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* 전역 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* 공통 클래스 */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* 모던한 그라디언트 배경 */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 카드 스타일 */
+.modern-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.modern-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* 버튼 스타일 */
+.modern-button {
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.modern-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 헤더 버튼 특별 스타일 */
+.modern-button[type="text"] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.modern-button[type="text"]:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .modern-button[type="text"]:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 입력 필드 스타일 */
+.modern-input {
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.modern-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* 다크모드 전환 애니메이션 */
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* 반응형 유틸리티 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
 .text-center {
   text-align: center;
 }
@@ -49,37 +176,74 @@ code {
   text-align: right;
 }
 
-.mb-16 {
-  margin-bottom: 16px;
+.flex {
+  display: flex;
 }
 
-.mb-24 {
-  margin-bottom: 24px;
+.flex-col {
+  flex-direction: column;
 }
 
-.mt-16 {
-  margin-top: 16px;
+.items-center {
+  align-items: center;
 }
 
-.mt-24 {
-  margin-top: 24px;
+.justify-center {
+  justify-content: center;
 }
 
-.p-16 {
-  padding: 16px;
+.justify-between {
+  justify-content: space-between;
 }
 
-.p-24 {
-  padding: 24px;
+.gap-2 {
+  gap: 0.5rem;
 }
 
-/* 반응형 디자인 */
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+/* 스페이싱 */
+.p-4 {
+  padding: 1rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.m-4 {
+  margin: 1rem;
+}
+
+.m-6 {
+  margin: 1.5rem;
+}
+
+.m-8 {
+  margin: 2rem;
+}
+
+/* 반응형 */
 @media (max-width: 768px) {
-  .ant-layout-content {
-    padding: 16px !important;
+  .container {
+    padding: 0 16px;
   }
   
-  .ant-card {
-    margin-bottom: 16px;
+  .p-8 {
+    padding: 1.5rem;
+  }
+  
+  .m-8 {
+    margin: 1.5rem;
   }
 } 
