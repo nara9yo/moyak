@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, Row, Col, Avatar, message, Divider, Typography } from 'antd';
+import { Card, Form, Input, Button, Row, Col, Avatar, message, Divider, Typography, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -77,83 +77,124 @@ const Profile = () => {
   };
 
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return (
+      <div style={{ textAlign: 'center', padding: '50px 20px' }}>
+        로딩 중...
+      </div>
+    );
   }
 
   if (error) {
-    return <div>프로필을 불러오는 중 오류가 발생했습니다.</div>;
+    return (
+      <div style={{ padding: '20px' }}>
+        <div style={{ textAlign: 'center', color: '#ff4d4f' }}>
+          프로필을 불러오는 중 오류가 발생했습니다.
+        </div>
+      </div>
+    );
   }
 
   if (!profile) {
-    return <div>프로필 정보를 찾을 수 없습니다.</div>;
+    return (
+      <div style={{ padding: '20px' }}>
+        <div style={{ textAlign: 'center', color: '#999' }}>
+          프로필 정보를 찾을 수 없습니다.
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <Card title="프로필 관리">
-        <Row gutter={24}>
-          <Col span={8}>
+    <div style={{ padding: '0 16px' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <Title level={2} style={{ margin: 0 }}>
+          프로필 관리
+        </Title>
+        <Text type="secondary">
+          개인 정보를 관리하고 비밀번호를 변경하세요.
+        </Text>
+      </div>
+
+      <Card title="프로필 정보" size="small" style={{ marginBottom: '24px' }}>
+        <Row gutter={[24, 24]}>
+          <Col xs={24} sm={8}>
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
               <Avatar 
                 size={120} 
                 icon={<UserOutlined />} 
                 style={{ marginBottom: 16 }}
               />
-              <h2>{profile.name}</h2>
-              <p style={{ color: '#666' }}>{profile.email}</p>
+              <Title level={4} style={{ margin: 0 }}>
+                {profile.name}
+              </Title>
+              <Text type="secondary">
+                {profile.email}
+              </Text>
             </div>
           </Col>
           
-          <Col span={16}>
+          <Col xs={24} sm={16}>
             {!isEditing ? (
               <div>
                 <div style={{ marginBottom: 16, textAlign: 'right' }}>
                   <Button 
                     type="primary" 
                     onClick={startEditing}
+                    size="large"
                   >
                     프로필 수정
                   </Button>
                 </div>
                 
-                <Row gutter={16}>
-                  <Col span={12}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={12}>
                     <div style={{ marginBottom: 16 }}>
-                      <strong>이름:</strong> {profile.name}
+                      <Text strong>이름:</Text>
+                      <div style={{ marginTop: '4px' }}>{profile.name}</div>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <div style={{ marginBottom: 16 }}>
-                      <strong>이메일:</strong> {profile.email}
+                      <Text strong>이메일:</Text>
+                      <div style={{ marginTop: '4px' }}>{profile.email}</div>
                     </div>
                   </Col>
                 </Row>
                 
-                <Row gutter={16}>
-                  <Col span={12}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={12}>
                     <div style={{ marginBottom: 16 }}>
-                      <strong>시간대:</strong> {profile.timezone || 'Asia/Seoul'}
+                      <Text strong>시간대:</Text>
+                      <div style={{ marginTop: '4px' }}>{profile.timezone || 'Asia/Seoul'}</div>
                     </div>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <div style={{ marginBottom: 16 }}>
-                      <strong>계정 상태:</strong> 
-                      <span style={{ color: profile.is_active ? 'green' : 'red' }}>
-                        {profile.is_active ? '활성' : '비활성'}
-                      </span>
+                      <Text strong>계정 상태:</Text>
+                      <div style={{ marginTop: '4px' }}>
+                        <span style={{ color: profile.is_active ? 'green' : 'red' }}>
+                          {profile.is_active ? '활성' : '비활성'}
+                        </span>
+                      </div>
                     </div>
                   </Col>
                 </Row>
                 
                 {profile.google_calendar_id && (
                   <div style={{ marginBottom: 16 }}>
-                    <strong>Google Calendar ID:</strong> {profile.google_calendar_id}
+                    <Text strong>Google Calendar ID:</Text>
+                    <div style={{ marginTop: '4px', wordBreak: 'break-all' }}>
+                      {profile.google_calendar_id}
+                    </div>
                   </div>
                 )}
                 
                 {profile.outlook_calendar_id && (
                   <div style={{ marginBottom: 16 }}>
-                    <strong>Outlook Calendar ID:</strong> {profile.outlook_calendar_id}
+                    <Text strong>Outlook Calendar ID:</Text>
+                    <div style={{ marginTop: '4px', wordBreak: 'break-all' }}>
+                      {profile.outlook_calendar_id}
+                    </div>
                   </div>
                 )}
               </div>
@@ -163,8 +204,8 @@ const Profile = () => {
                 layout="vertical"
                 onFinish={handleProfileSubmit}
               >
-                <Row gutter={16}>
-                  <Col span={12}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={12}>
                     <Form.Item
                       name="name"
                       label="이름"
@@ -173,7 +214,7 @@ const Profile = () => {
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <Form.Item
                       name="timezone"
                       label="시간대"
@@ -184,8 +225,8 @@ const Profile = () => {
                   </Col>
                 </Row>
                 
-                <Row gutter={16}>
-                  <Col span={12}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={12}>
                     <Form.Item
                       name="google_calendar_id"
                       label="Google Calendar ID"
@@ -193,7 +234,7 @@ const Profile = () => {
                       <Input placeholder="Google Calendar ID (선택사항)" />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col xs={24} sm={12}>
                     <Form.Item
                       name="outlook_calendar_id"
                       label="Outlook Calendar ID"
@@ -204,17 +245,18 @@ const Profile = () => {
                 </Row>
                 
                 <Form.Item>
-                  <Button 
-                    type="primary" 
-                    htmlType="submit"
-                    loading={updateProfileMutation.isPending}
-                    style={{ marginRight: 8 }}
-                  >
-                    저장
-                  </Button>
-                  <Button onClick={cancelEditing}>
-                    취소
-                  </Button>
+                  <Space>
+                    <Button 
+                      type="primary" 
+                      htmlType="submit"
+                      loading={updateProfileMutation.isPending}
+                    >
+                      저장
+                    </Button>
+                    <Button onClick={cancelEditing}>
+                      취소
+                    </Button>
+                  </Space>
                 </Form.Item>
               </Form>
             )}
@@ -224,13 +266,13 @@ const Profile = () => {
 
       <Divider />
 
-      <Card title="비밀번호 변경">
+      <Card title="비밀번호 변경" size="small">
         <Form
           layout="vertical"
           onFinish={handlePasswordSubmit}
         >
-          <Row gutter={16}>
-            <Col span={8}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={8}>
               <Form.Item
                 name="current_password"
                 label="현재 비밀번호"
@@ -239,7 +281,7 @@ const Profile = () => {
                 <Input.Password prefix={<LockOutlined />} />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={8}>
               <Form.Item
                 name="new_password"
                 label="새 비밀번호"
@@ -251,7 +293,7 @@ const Profile = () => {
                 <Input.Password prefix={<LockOutlined />} />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={8}>
               <Form.Item
                 name="confirm_password"
                 label="새 비밀번호 확인"

@@ -12,6 +12,106 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>모약(MOYAK) - 모두의 약속</title>
+    <style>
+      /* 반응형 유틸리티 클래스 */
+      .hidden-xs { display: none !important; }
+      .visible-xs { display: block !important; }
+      
+      @media (min-width: 576px) {
+        .hidden-xs { display: block !important; }
+        .visible-xs { display: none !important; }
+      }
+      
+      .hidden-sm { display: none !important; }
+      .visible-sm { display: block !important; }
+      
+      @media (min-width: 768px) {
+        .hidden-sm { display: block !important; }
+        .visible-sm { display: none !important; }
+      }
+      
+      .hidden-md { display: none !important; }
+      .visible-md { display: block !important; }
+      
+      @media (min-width: 992px) {
+        .hidden-md { display: block !important; }
+        .visible-md { display: none !important; }
+      }
+      
+      .hidden-lg { display: none !important; }
+      .visible-lg { display: block !important; }
+      
+      @media (min-width: 1200px) {
+        .hidden-lg { display: block !important; }
+        .visible-lg { display: none !important; }
+      }
+      
+             /* 예약 상세 페이지 모바일 스타일 */
+       @media (max-width: 767px) {
+         .mobile-statistic .ant-statistic-title {
+           font-size: 12px !important;
+           line-height: 1.2 !important;
+         }
+         
+         .mobile-statistic .ant-statistic-content {
+           font-size: 16px !important;
+           line-height: 1.2 !important;
+         }
+         
+         .booking-actions .ant-space {
+           gap: 8px !important;
+         }
+         
+         .booking-actions .ant-btn {
+           padding: 6px 12px !important;
+           font-size: 13px !important;
+           height: 32px !important;
+           min-width: 60px !important;
+         }
+         
+         .booking-actions .ant-btn .anticon {
+           margin-right: 4px !important;
+         }
+       }
+       
+       /* 예약 상세 페이지 카드 스타일 */
+       .ant-card {
+         position: relative !important;
+       }
+       
+       /* 예약 상세 페이지 구분선 스타일 */
+       .booking-divider {
+         border-top: 3px solid #bfbfbf !important;
+         margin: 24px 0 !important;
+         background-color: #bfbfbf !important;
+         height: 3px !important;
+       }
+       
+       /* 공개 예약 페이지 카드 너비 고정 */
+       .public-booking-card {
+         width: 100% !important;
+         min-width: 100% !important;
+         max-width: 100% !important;
+         flex-shrink: 0 !important;
+         flex-grow: 0 !important;
+       }
+       
+       .public-booking-card .ant-card-body {
+         width: 100% !important;
+         min-width: 100% !important;
+         max-width: 100% !important;
+         flex-shrink: 0 !important;
+         flex-grow: 0 !important;
+       }
+       
+       .public-booking-step-container {
+         width: 100% !important;
+         min-width: 100% !important;
+         max-width: 100% !important;
+         flex-shrink: 0 !important;
+         flex-grow: 0 !important;
+       }
+    </style>
   </head>
   <body>
     <noscript>이 앱을 실행하려면 JavaScript를 활성화해야 합니다.</noscript>

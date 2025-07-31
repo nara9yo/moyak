@@ -98,11 +98,11 @@ const Login = () => {
     <div
       style={{
         minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '20px',
+        padding: '24px',
       }}
     >
       <Card
@@ -112,54 +112,57 @@ const Login = () => {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           borderRadius: '12px',
         }}
+        size="small"
       >
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <Title level={2} style={{ color: '#1890ff', marginBottom: '8px' }}>
-            모약 (MOYAK)
+          <Title 
+            level={2} 
+            style={{ 
+              margin: 0, 
+              color: '#1890ff'
+            }}
+          >
+            MOYAK
           </Title>
-          <Text type="secondary">모두의 약속, 쉽고 효율적인 스케줄링</Text>
+          <Text 
+            type="secondary" 
+            style={{ 
+              display: 'block',
+              marginTop: '8px'
+            }}
+          >
+            모두의 약속을 더 쉽게
+          </Text>
         </div>
-
-        {/* 테스트용 계정 정보 */}
-        <Collapse 
-          ghost 
-          style={{ marginBottom: '24px' }}
-          expandIconPosition="end"
-          items={collapseItems}
-        />
 
         <Form
           form={form}
-          name="login"
-          onFinish={onFinish}
-          autoComplete="off"
           layout="vertical"
+          onFinish={onFinish}
           size="large"
         >
           <Form.Item
             name="email"
+            label="이메일"
             rules={[
               { required: true, message: '이메일을 입력해주세요.' },
-              { type: 'email', message: '유효한 이메일을 입력해주세요.' },
+              { type: 'email', message: '올바른 이메일 형식을 입력해주세요.' }
             ]}
           >
             <Input
               prefix={<MailOutlined />}
-              placeholder="이메일"
-              autoComplete="email"
+              placeholder="이메일을 입력하세요"
             />
           </Form.Item>
 
           <Form.Item
             name="password"
-            rules={[
-              { required: true, message: '비밀번호를 입력해주세요.' },
-            ]}
+            label="비밀번호"
+            rules={[{ required: true, message: '비밀번호를 입력해주세요.' }]}
           >
             <Input.Password
               prefix={<LockOutlined />}
-              placeholder="비밀번호"
-              autoComplete="current-password"
+              placeholder="비밀번호를 입력하세요"
             />
           </Form.Item>
 
@@ -168,13 +171,7 @@ const Login = () => {
               type="primary"
               htmlType="submit"
               loading={loading}
-              style={{
-                width: '100%',
-                height: '48px',
-                borderRadius: '8px',
-                fontSize: '16px',
-                fontWeight: '600',
-              }}
+              style={{ width: '100%', height: '48px' }}
             >
               로그인
             </Button>
@@ -185,14 +182,22 @@ const Login = () => {
           <Text type="secondary">또는</Text>
         </Divider>
 
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Text style={{ textAlign: 'center', display: 'block' }}>
+        <div style={{ textAlign: 'center' }}>
+          <Text type="secondary">
             계정이 없으신가요?{' '}
             <Link to="/register" style={{ color: '#1890ff' }}>
               회원가입
             </Link>
           </Text>
-        </Space>
+        </div>
+
+        <div style={{ marginTop: '24px' }}>
+          <Collapse
+            items={collapseItems}
+            size="small"
+            ghost
+          />
+        </div>
       </Card>
     </div>
   );

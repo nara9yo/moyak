@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Statistic, Button, List, Tag, Space, Alert, Spin } from 'antd';
+import { Row, Col, Card, Statistic, Button, List, Tag, Space, Alert, Spin, Typography } from 'antd';
 import {
   CalendarOutlined,
   UserOutlined,
@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import api from '../services/api';
+
+const { Title, Text } = Typography;
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -53,7 +55,7 @@ const Dashboard = () => {
   // 로딩 상태
   if (isLoading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div style={{ textAlign: 'center', padding: '50px 20px' }}>
         <Spin size="large" />
         <div style={{ marginTop: '16px' }}>대시보드 데이터를 불러오는 중...</div>
       </div>
@@ -80,52 +82,52 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    <div style={{ padding: '0 16px' }}>
       <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '600' }}>
+        <Title level={2} style={{ margin: 0 }}>
           대시보드
-        </h1>
-        <p style={{ margin: '8px 0 0 0', color: '#666' }}>
+        </Title>
+        <Text type="secondary">
           오늘의 예약 현황과 최근 활동을 확인하세요.
-        </p>
+        </Text>
       </div>
 
       {/* 통계 카드 */}
       <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={12} sm={12} lg={6}>
+          <Card size="small" style={{ textAlign: 'center' }}>
             <Statistic
-              title="총 이벤트"
+              title={<span>총 이벤트</span>}
               value={stats.totalEvents}
               prefix={<CalendarOutlined />}
               valueStyle={{ color: '#1890ff' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={12} sm={12} lg={6}>
+          <Card size="small" style={{ textAlign: 'center' }}>
             <Statistic
-              title="총 예약"
+              title={<span>총 예약</span>}
               value={stats.totalBookings}
               prefix={<UserOutlined />}
               valueStyle={{ color: '#52c41a' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={12} sm={12} lg={6}>
+          <Card size="small" style={{ textAlign: 'center' }}>
             <Statistic
-              title="대기중 예약"
+              title={<span>대기중</span>}
               value={stats.pendingBookings}
               prefix={<ClockCircleOutlined />}
               valueStyle={{ color: '#faad14' }}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
+        <Col xs={12} sm={12} lg={6}>
+          <Card size="small" style={{ textAlign: 'center' }}>
             <Statistic
-              title="확정된 예약"
+              title={<span>확정</span>}
               value={stats.confirmedBookings}
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#52c41a' }}
@@ -134,38 +136,53 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]}>
-        {/* 최근 예약 */}
+      {/* 최근 예약 */}
+      <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
         <Col xs={24} lg={12}>
           <Card
-            title="최근 예약"
-            extra={
-              <Button
-                type="link"
-                onClick={() => navigate('/bookings')}
-                style={{ padding: 0 }}
-              >
-                모두 보기
-              </Button>
+            title={
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>최근 예약</span>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => navigate('/bookings')}
+                  style={{ padding: 0 }}
+                >
+                  전체보기
+                </Button>
+              </div>
             }
+            size="small"
           >
             <List
               dataSource={recentBookings}
-              loading={isLoading}
               renderItem={(booking) => (
-                <List.Item>
+                <List.Item
+                  style={{ padding: '8px 0' }}
+                  actions={[
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => navigate(`/bookings/${booking.id}`)}
+                      style={{ padding: 0 }}
+                    >
+                      보기
+                    </Button>
+                  ]}
+                >
                   <List.Item.Meta
                     title={
-                      <Space>
-                        <span>{booking.guest_name}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <span style={{ fontWeight: '600' }}>{booking.guest_name}</span>
                         {getStatusTag(booking.status)}
-                      </Space>
+                      </div>
                     }
                     description={
                       <div>
-                        <div>{booking.event_title || booking.event?.title}</div>
-                        <div style={{ color: '#666', fontSize: '12px' }}>
-                          {dayjs(booking.scheduled_at).format('YYYY-MM-DD HH:mm')}
+                        <div>{booking.event_title || '이벤트명 없음'}</div>
+                        <div style={{ color: '#666' }}>
+                          {dayjs(booking.scheduled_at).format('MM/DD HH:mm')}
                         </div>
                       </div>
                     }
@@ -173,7 +190,7 @@ const Dashboard = () => {
                 </List.Item>
               )}
               locale={{
-                emptyText: '최근 예약이 없습니다.',
+                emptyText: '최근 예약이 없습니다.'
               }}
             />
           </Card>
@@ -182,44 +199,59 @@ const Dashboard = () => {
         {/* 다가오는 이벤트 */}
         <Col xs={24} lg={12}>
           <Card
-            title="다가오는 이벤트"
-            extra={
-              <Button
-                type="link"
-                onClick={() => navigate('/events')}
-                style={{ padding: 0 }}
-              >
-                모두 보기
-              </Button>
+            title={
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>다가오는 이벤트</span>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => navigate('/events')}
+                  style={{ padding: 0 }}
+                >
+                  전체보기
+                </Button>
+              </div>
             }
+            size="small"
           >
             <List
               dataSource={upcomingEvents}
-              loading={isLoading}
               renderItem={(event) => (
-                <List.Item>
+                <List.Item
+                  style={{ padding: '8px 0' }}
+                  actions={[
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => navigate(`/events/${event.id}`)}
+                      style={{ padding: 0 }}
+                    >
+                      보기
+                    </Button>
+                  ]}
+                >
                   <List.Item.Meta
-                    title={event.title}
+                    title={
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <span style={{ fontWeight: '600' }}>{event.title}</span>
+                        <Tag color="blue">{event.duration}분</Tag>
+                      </div>
+                    }
                     description={
                       <div>
-                        <div>{event.description}</div>
-                        <div style={{ color: '#666', fontSize: '12px' }}>
-                          {event.duration}분 • {event.location_type}
+                        <div style={{ color: '#666', marginBottom: '4px' }}>
+                          {event.description || '설명 없음'}
+                        </div>
+                        <div style={{ color: '#999' }}>
+                          {dayjs(event.created_at).format('MM/DD')} 생성
                         </div>
                       </div>
                     }
                   />
-                  <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => navigate(`/events/${event.id}`)}
-                  >
-                    상세보기
-                  </Button>
                 </List.Item>
               )}
               locale={{
-                emptyText: '다가오는 이벤트가 없습니다.',
+                emptyText: '다가오는 이벤트가 없습니다.'
               }}
             />
           </Card>
@@ -227,34 +259,31 @@ const Dashboard = () => {
       </Row>
 
       {/* 빠른 액션 */}
-      <Card style={{ marginTop: '24px' }}>
-        <div style={{ textAlign: 'center' }}>
-          <h3 style={{ marginBottom: '16px' }}>빠른 액션</h3>
-          <Space size="large">
-            <Button
-              type="primary"
-              size="large"
-              icon={<PlusOutlined />}
-              onClick={() => navigate('/events/create')}
-            >
-              새 이벤트 생성
-            </Button>
-            <Button
-              size="large"
-              icon={<CalendarOutlined />}
-              onClick={() => navigate('/events')}
-            >
-              이벤트 관리
-            </Button>
-            <Button
-              size="large"
-              icon={<UserOutlined />}
-              onClick={() => navigate('/bookings')}
-            >
-              예약 관리
-            </Button>
-          </Space>
-        </div>
+      <Card title="빠른 액션" size="small">
+        <Space wrap style={{ width: '100%', justifyContent: 'center' }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/events/create')}
+            size="large"
+          >
+            새 이벤트 생성
+          </Button>
+          <Button
+            icon={<CalendarOutlined />}
+            onClick={() => navigate('/events')}
+            size="large"
+          >
+            이벤트 관리
+          </Button>
+          <Button
+            icon={<UserOutlined />}
+            onClick={() => navigate('/bookings')}
+            size="large"
+          >
+            예약 관리
+          </Button>
+        </Space>
       </Card>
     </div>
   );

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, InputNumber, Button, Card, Typography, Space, TimePicker, Switch, message } from 'antd';
+import { Form, Input, Select, InputNumber, Button, Card, Typography, Space, TimePicker, Switch, message, Row, Col } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import api from '../services/api';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -69,15 +69,17 @@ const EventCreate = () => {
   ];
 
   return (
-    <div>
+    <div style={{ padding: '0 16px' }}>
       <div style={{ marginBottom: '24px' }}>
-        <Title level={2}>새 이벤트 생성</Title>
-        <p style={{ color: '#666', margin: 0 }}>
+        <Title level={2} style={{ margin: 0, fontSize: { xs: '24px', sm: '28px' } }}>
+          새 이벤트 생성
+        </Title>
+        <Text type="secondary" style={{ fontSize: { xs: '14px', sm: '16px' } }}>
           고객이 예약할 수 있는 이벤트를 생성하세요.
-        </p>
+        </Text>
       </div>
 
-      <Card>
+      <Card size="small">
         <Form
           form={form}
           layout="vertical"
@@ -93,165 +95,252 @@ const EventCreate = () => {
             is_active: true
           }}
         >
-          <Form.Item
-            name="title"
-            label="이벤트 제목"
-            rules={[{ required: true, message: '이벤트 제목을 입력해주세요.' }]}
-          >
-            <Input placeholder="예: 미팅 예약" />
-          </Form.Item>
+          {/* 기본 정보 */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="title"
+                label="이벤트 제목"
+                rules={[{ required: true, message: '이벤트 제목을 입력해주세요.' }]}
+              >
+                <Input placeholder="예: 상담 미팅" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="duration"
+                label="소요 시간 (분)"
+                rules={[{ required: true, message: '소요 시간을 입력해주세요.' }]}
+              >
+                <InputNumber
+                  min={5}
+                  max={480}
+                  style={{ width: '100%' }}
+                  placeholder="30"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             name="description"
-            label="설명"
+            label="이벤트 설명"
           >
-            <TextArea 
-              rows={4} 
-              placeholder="이벤트에 대한 설명을 입력하세요."
+            <TextArea
+              rows={3}
+              placeholder="이벤트에 대한 상세한 설명을 입력하세요."
             />
           </Form.Item>
 
-          <Form.Item
-            name="duration"
-            label="소요 시간 (분)"
-            rules={[{ required: true, message: '소요 시간을 입력해주세요.' }]}
-          >
-            <InputNumber min={15} max={480} style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="location_type"
-            label="장소 유형"
-            rules={[{ required: true, message: '장소 유형을 선택해주세요.' }]}
-          >
-            <Select>
-              {locationOptions.map(option => (
-                <Option key={option.value} value={option.value}>
-                  {option.label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+          {/* 장소 및 설정 */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="location_type"
+                label="장소 유형"
+                rules={[{ required: true, message: '장소 유형을 선택해주세요.' }]}
+              >
+                <Select placeholder="장소 유형 선택">
+                  {locationOptions.map(option => (
+                    <Option key={option.value} value={option.value}>
+                      {option.label}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="color"
+                label="이벤트 색상"
+              >
+                <Input type="color" style={{ width: '100%', height: '40px' }} />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             name="location_details"
             label="장소 상세 정보"
           >
-            <Input placeholder="예: Zoom, 회사 회의실, 전화번호 등" />
+            <TextArea
+              rows={2}
+              placeholder="Zoom 링크, 주소, 전화번호 등"
+            />
           </Form.Item>
 
-          <Form.Item
-            name="color"
-            label="이벤트 색상"
-          >
-            <Input type="color" style={{ width: '100px' }} />
-          </Form.Item>
+          {/* 버퍼 시간 설정 */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="buffer_time_before"
+                label="이전 버퍼 시간 (분)"
+              >
+                <InputNumber
+                  min={0}
+                  max={60}
+                  style={{ width: '100%' }}
+                  placeholder="0"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="buffer_time_after"
+                label="이후 버퍼 시간 (분)"
+              >
+                <InputNumber
+                  min={0}
+                  max={60}
+                  style={{ width: '100%' }}
+                  placeholder="0"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <Form.Item
-            name="is_active"
-            label="활성화"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
-
-          <Form.Item
-            name="buffer_time_before"
-            label="이전 버퍼 시간 (분)"
-          >
-            <InputNumber min={0} max={60} style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="buffer_time_after"
-            label="이후 버퍼 시간 (분)"
-          >
-            <InputNumber min={0} max={60} style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="max_bookings_per_day"
-            label="일일 최대 예약 수"
-          >
-            <InputNumber min={1} max={100} style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            name="advance_booking_limit"
-            label="사전 예약 제한 (일)"
-          >
-            <InputNumber min={1} max={365} style={{ width: '100%' }} />
-          </Form.Item>
+          {/* 예약 제한 설정 */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="max_bookings_per_day"
+                label="일일 최대 예약 수"
+              >
+                <InputNumber
+                  min={1}
+                  max={100}
+                  style={{ width: '100%' }}
+                  placeholder="10"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                name="advance_booking_limit"
+                label="사전 예약 제한 (일)"
+              >
+                <InputNumber
+                  min={1}
+                  max={365}
+                  style={{ width: '100%' }}
+                  placeholder="30"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             name="cancellation_policy"
             label="취소 정책"
           >
-            <TextArea 
-              rows={3} 
-              placeholder="취소 정책을 입력하세요."
+            <TextArea
+              rows={2}
+              placeholder="예: 24시간 전까지 취소 가능"
             />
           </Form.Item>
+
+          <Form.Item
+            name="is_active"
+            label="이벤트 활성화"
+            valuePropName="checked"
+          >
+            <Switch />
+          </Form.Item>
+
+          {/* 가용 시간 설정 */}
+          <div style={{ marginBottom: '16px' }}>
+            <Title level={4} style={{ margin: 0, fontSize: { xs: '18px', sm: '20px' } }}>
+              가용 시간 설정
+            </Title>
+            <Text type="secondary" style={{ fontSize: { xs: '12px', sm: '14px' } }}>
+              고객이 예약할 수 있는 시간대를 설정하세요.
+            </Text>
+          </div>
 
           <Form.List name="availabilities">
             {(fields, { add, remove }) => (
               <>
-                <Form.Item label="가용 시간">
-                  {fields.map(({ key, name, ...restField }) => (
-                    <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'day_of_week']}
-                        rules={[{ required: true, message: '요일을 선택해주세요.' }]}
-                      >
-                        <Select style={{ width: 120 }} placeholder="요일">
-                          {dayOptions.map(option => (
-                            <Option key={option.value} value={option.value}>
-                              {option.label}
-                            </Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'start_time']}
-                        rules={[{ required: true, message: '시작 시간을 입력해주세요.' }]}
-                      >
-                        <TimePicker format="HH:mm" placeholder="시작 시간" />
-                      </Form.Item>
-                      <span>~</span>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'end_time']}
-                        rules={[{ required: true, message: '종료 시간을 입력해주세요.' }]}
-                      >
-                        <TimePicker format="HH:mm" placeholder="종료 시간" />
-                      </Form.Item>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Card
+                    key={key}
+                    size="small"
+                    style={{ marginBottom: '12px' }}
+                    extra={
                       <Button
                         type="text"
                         danger
                         icon={<DeleteOutlined />}
                         onClick={() => remove(name)}
+                        size="small"
                       />
-                    </Space>
-                  ))}
-                  <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      block
-                      icon={<PlusOutlined />}
-                    >
-                      가용 시간 추가
-                    </Button>
-                  </Form.Item>
+                    }
+                  >
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} sm={8}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'day_of_week']}
+                          label="요일"
+                          rules={[{ required: true, message: '요일을 선택해주세요.' }]}
+                        >
+                          <Select placeholder="요일 선택">
+                            {dayOptions.map(option => (
+                              <Option key={option.value} value={option.value}>
+                                {option.label}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24} sm={8}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'start_time']}
+                          label="시작 시간"
+                          rules={[{ required: true, message: '시작 시간을 선택해주세요.' }]}
+                        >
+                          <TimePicker
+                            format="HH:mm"
+                            style={{ width: '100%' }}
+                            placeholder="09:00"
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24} sm={8}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'end_time']}
+                          label="종료 시간"
+                          rules={[{ required: true, message: '종료 시간을 선택해주세요.' }]}
+                        >
+                          <TimePicker
+                            format="HH:mm"
+                            style={{ width: '100%' }}
+                            placeholder="17:00"
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Card>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                    size="large"
+                  >
+                    가용 시간 추가
+                  </Button>
                 </Form.Item>
               </>
             )}
           </Form.List>
 
+          {/* 제출 버튼 */}
           <Form.Item>
-            <Space>
+            <Space size="large" style={{ width: '100%', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
               <Button
                 type="primary"
                 htmlType="submit"

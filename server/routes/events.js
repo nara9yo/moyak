@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { Event, Availability, User } = require('../models');
 const auth = require('../middleware/auth');
+const dayjs = require('dayjs');
 
 const router = express.Router();
 
@@ -253,11 +254,11 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // 공개 이벤트 조회 (인증 불필요)
-router.get('/public/:id', async (req, res) => {
+router.get('/public/:bookingLink', async (req, res) => {
   try {
     const event = await Event.findOne({
       where: { 
-        id: req.params.id,
+        booking_link: req.params.bookingLink,
         is_active: true 
       },
       include: [
@@ -265,7 +266,7 @@ router.get('/public/:id', async (req, res) => {
           model: Availability,
           as: 'availabilities',
           where: { is_active: true },
-          attributes: ['day_of_week', 'start_time', 'end_time']
+          attributes: ['id', 'day_of_week', 'start_time', 'end_time']
         }
       ]
     });
@@ -274,7 +275,23 @@ router.get('/public/:id', async (req, res) => {
       return res.status(404).json({ message: '이벤트를 찾을 수 없습니다.' });
     }
 
-    res.json({ event });
+    // 가용 시간 데이터를 클라이언트에서 사용할 수 있는 형식으로 변환
+    const eventData = event.toJSON();
+    if (eventData.availabilities) {
+      eventData.availabilities = eventData.availabilities.map(availability => {
+        // TIME 타입 데이터를 문자열로 변환
+        const startTimeStr = availability.start_time.toString();
+        const endTimeStr = availability.end_time.toString();
+        
+        return {
+          ...availability,
+          start_time: startTimeStr,
+          end_time: endTimeStr
+        };
+      });
+    }
+
+    res.json({ event: eventData });
   } catch (error) {
     console.error('공개 이벤트 조회 오류:', error);
     res.status(500).json({ message: '서버 오류가 발생했습니다.' });
