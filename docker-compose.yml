@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U moyak_user -d moyak_db"]
@@ -26,6 +26,7 @@ services:
   # MOYAK 애플리케이션
   moyak-app:
     build: .
+    image: moyak-app:latest
     container_name: moyak-app
     environment:
       # 서버 설정
