@@ -10,6 +10,7 @@ RUN apk update && apk add --no-cache \
     python3 \
     make \
     g++ \
+    postgresql-client \
     && rm -rf /var/cache/apk/*
 
 # package.json 파일들을 먼저 복사 (캐싱 최적화)
@@ -43,5 +44,5 @@ ENV PORT=5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
-# 초기화 스크립트 실행 후 서버 시작 (수정된 부분)
+# 초기화 스크립트 실행 후 서버 시작
 CMD ["/bin/sh", "-c", "/app/docker-init.sh && node server/server.js"]
