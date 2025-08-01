@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # MOYAK Docker 초기화 스크립트
 

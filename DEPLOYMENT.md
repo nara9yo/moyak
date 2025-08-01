@@ -67,7 +67,7 @@ docker-compose logs -f
 1. **제어판** → **보안** → **방화벽**
 2. **포트 허용 규칙** 추가:
    - **5434** (MOYAK 앱)
-   - **5432** (PostgreSQL, 내부용)
+   - **5433** (PostgreSQL, 외부 접속용)
 
 ### 5. 접속 확인
 
@@ -129,6 +129,12 @@ docker exec moyak-postgres pg_dump -U moyak_user moyak_db > backup_$(date +%Y%m%
 
 # 백업 복원
 docker exec -i moyak-postgres psql -U moyak_user moyak_db < backup_file.sql
+
+# 외부에서 직접 백업 (포트 5433 사용)
+pg_dump -h localhost -p 5433 -U moyak_user moyak_db > external_backup.sql
+
+# 외부에서 직접 접속
+psql -h localhost -p 5433 -U moyak_user -d moyak_db
 ```
 
 ## 🐛 문제 해결
@@ -139,7 +145,7 @@ docker exec -i moyak-postgres psql -U moyak_user moyak_db < backup_file.sql
 ```bash
 # 포트 사용 확인
 netstat -tlnp | grep :5434
-netstat -tlnp | grep :5432
+netstat -tlnp | grep :5433
 
 # 사용 중인 프로세스 종료
 sudo kill -9 <PID>
@@ -198,6 +204,9 @@ docker exec -it moyak-app /bin/bash
 
 # PostgreSQL 컨테이너 접속
 docker exec -it moyak-postgres psql -U moyak_user -d moyak_db
+
+# 외부에서 PostgreSQL 직접 접속 (포트 5433)
+psql -h localhost -p 5433 -U moyak_user -d moyak_db
 ```
 
 ## 🔒 보안 설정
