@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path'); // React 앱 서빙을 위해 추가
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -18,13 +19,17 @@ const PORT = process.env.PORT || 5000;
 app.set('trust proxy', 1);
 
 // 보안 미들웨어
-app.use(helmet());
-
-// CORS 설정
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true
+app.use(helmet({
+  contentSecurityPolicy: false, // React 앱을 위해 비활성화
 }));
+
+// CORS 설정 (개발 환경에서만)
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
+}
 
 // Rate limiting - 더 안전한 설정
 const limiter = rateLimit({
@@ -60,9 +65,23 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'MOYAK 서버가 정상적으로 실행 중입니다.' });
 });
 
-// 404 핸들러
-app.use('*', (req, res) => {
-  res.status(404).json({ message: '요청한 리소스를 찾을 수 없습니다.' });
+// React 앱을 위한 정적 파일 서빙 (프로덕션)
+if (process.env.NODE_ENV === 'production') {
+  // React 빌드 파일 서빙
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  // React Router를 위한 catch-all 핸들러
+  app.get('*', (req, res) => {
+    // API 요청이 아닌 경우에만 React 앱으로 라우팅
+    if (!req.path.startsWith('/api/')) {
+      res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    }
+  });
+}
+
+// 404 핸들러 (API 요청에 대해서만)
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: '요청한 API 리소스를 찾을 수 없습니다.' });
 });
 
 // 에러 핸들러
@@ -74,8 +93,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 MOYAK 서버가 포트 ${PORT}에서 실행 중입니다.`);
+  console.log(`🌐 모드: ${process.env.NODE_ENV || 'development'}`);
   console.log(`📧 이메일 서비스: ${process.env.EMAIL_HOST ? '활성화' : '비활성화'}`);
   console.log(`🗄️  데이터베이스: ${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`);
   console.log(`🔒 Rate Limiting: ${process.env.NODE_ENV === 'development' ? '개발 모드 (비활성화)' : '활성화'}`);
