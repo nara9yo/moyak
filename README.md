@@ -28,8 +28,8 @@ MOYAK은 Calendly와 유사한 예약 스케줄링 플랫폼입니다. 사용자
 - [기여하기](#-기여하기)
 - [라이선스](#-라이선스)
 
-## 데모화면
-https://github.com/user-attachments/assets/bcaf4c09-54ad-42f7-989c-a03103f517d5
+## 🎥 데모화면
+https://github.com/user-attachments/assets/21d9d46f-9ff8-4f5f-8a5a-1298a50447ae
 
 ## 🚀 주요 기능
 
