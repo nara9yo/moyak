@@ -51,7 +51,7 @@ services:
       EMAIL_PASS: your_app_password
       
       # 프론트엔드 URL
-      CLIENT_URL: http://your-synology-ip:5434
+      CLIENT_URL: http://your-service-ip:5434
     ports:
       - "5434:5000"  # 외부 포트 5434, 내부 포트 5000
     depends_on:

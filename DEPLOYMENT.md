@@ -19,7 +19,7 @@
 #### SSH 사용
 ```bash
 # SSH로 시놀로지 접속
-ssh admin@your-synology-ip
+ssh admin@your-service-ip
 
 # 프로젝트 디렉토리 생성
 sudo mkdir -p /volume1/docker/moyak
@@ -38,7 +38,7 @@ EMAIL_USER: your_actual_email@gmail.com
 EMAIL_PASS: your_actual_app_password
 
 # 시놀로지 IP 주소로 변경
-CLIENT_URL: http://your-synology-ip:5434
+CLIENT_URL: http://your-service-ip:5434
 ```
 
 ### 3. Docker Compose로 배포
@@ -73,16 +73,16 @@ docker-compose logs -f
 
 #### 브라우저에서 접속
 ```
-http://your-synology-ip:5434
+http://your-service-ip:5434
 ```
 
 #### API 테스트
 ```bash
 # 헬스 체크
-curl http://your-synology-ip:5434/api/health
+curl http://your-service-ip:5434/api/health
 
 # 또는 브라우저에서
-http://your-synology-ip:5434/api/health
+http://your-service-ip:5434/api/health
 ```
 
 ## 🔧 관리 명령어
@@ -245,12 +245,12 @@ docker stats moyak-app postgres
 ### 헬스 체크
 ```bash
 # 헬스 체크 확인
-curl http://your-synology-ip:5434/api/health
+curl http://your-service-ip:5434/api/health
 
 # 자동 모니터링 스크립트 예시
 #!/bin/bash
 while true; do
-  if curl -f http://your-synology-ip:5434/api/health > /dev/null 2>&1; then
+  if curl -f http://your-service-ip:5434/api/health > /dev/null 2>&1; then
     echo "$(date): MOYAK 서비스 정상"
   else
     echo "$(date): MOYAK 서비스 오류 - 재시작 시도"
@@ -286,7 +286,7 @@ docker exec -it moyak-app node server/migrations/init.js
 1. 로그 확인: `docker-compose logs`
 2. 컨테이너 상태: `docker-compose ps`
 3. 리소스 사용량: `docker stats`
-4. 네트워크 연결: `ping your-synology-ip`
+4. 네트워크 연결: `ping your-service-ip`
 
 ---
 

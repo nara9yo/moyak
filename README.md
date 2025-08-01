@@ -320,7 +320,7 @@ EMAIL_USER: your_actual_email@gmail.com
 EMAIL_PASS: your_actual_app_password
 
 # 시놀로지 IP 주소로 변경
-CLIENT_URL: http://your-synology-ip:5434
+CLIENT_URL: http://your-service-ip:5434
 ```
 
 #### 3. Docker Compose로 배포
@@ -338,7 +338,7 @@ docker-compose down
 #### 4. 접속 확인
 ```
 http://localhost:5434  # 로컬 배포 시
-http://your-synology-ip:5434  # 시놀로지 배포 시
+http://your-service-ip:5434  # 시놀로지 배포 시
 ```
 
 ## 📱 사용법
@@ -403,7 +403,7 @@ http://your-synology-ip:5434  # 시놀로지 배포 시
 #### 1. 프로젝트 파일 업로드
 ```bash
 # SSH로 시놀로지 접속
-ssh admin@your-synology-ip
+ssh admin@your-service-ip
 
 # 프로젝트 디렉토리 생성
 sudo mkdir -p /volume1/docker/moyak
@@ -418,7 +418,7 @@ git clone https://github.com/your-repo/moyak.git .
 ```yaml
 EMAIL_USER: your_actual_email@gmail.com
 EMAIL_PASS: your_actual_app_password
-CLIENT_URL: http://your-synology-ip:5434
+CLIENT_URL: http://your-service-ip:5434
 ```
 
 #### 3. Docker Compose로 배포
@@ -646,12 +646,12 @@ npm update
 ### 헬스 체크
 ```bash
 # 헬스 체크 확인
-curl http://your-synology-ip:5434/api/health
+curl http://your-service-ip:5434/api/health
 
 # 자동 모니터링 스크립트 예시
 #!/bin/bash
 while true; do
-  if curl -f http://your-synology-ip:5434/api/health > /dev/null 2>&1; then
+  if curl -f http://your-service-ip:5434/api/health > /dev/null 2>&1; then
     echo "$(date): MOYAK 서비스 정상"
   else
     echo "$(date): MOYAK 서비스 오류 - 재시작 시도"
@@ -760,13 +760,9 @@ npm run test
 3. 새로운 이슈 등록
 
 ### 연락처
-- **이메일**: support@moyak.com
+- **이메일**: nara9yo@gmail.com
 - **GitHub**: [Issues](../../issues)
 - **문서**: [Wiki](../../wiki)
-
-### 커뮤니티
-- **Discord**: [MOYAK Community](https://discord.gg/moyak)
-- **Blog**: [MOYAK Blog](https://blog.moyak.com)
 
 자세한 배포 가이드는 [DEPLOYMENT.md](./DEPLOYMENT.md)를 참조하세요.
 
@@ -777,14 +773,14 @@ npm run test
 <div align="center">
   <p>Made with ❤️ by the MOYAK Team</p>
   <p>
-    <a href="https://github.com/your-username/moyak/stargazers">
-      <img src="https://img.shields.io/github/stars/your-username/moyak" alt="Stars">
+    <a href="https://github.com/nara9yo/moyak/stargazers">
+      <img src="https://img.shields.io/github/stars/nara9yo/moyak" alt="Stars">
     </a>
-    <a href="https://github.com/your-username/moyak/network">
-      <img src="https://img.shields.io/github/forks/your-username/moyak" alt="Forks">
+    <a href="https://github.com/nara9yo/moyak/network">
+      <img src="https://img.shields.io/github/forks/nara9yo/moyak" alt="Forks">
     </a>
-    <a href="https://github.com/your-username/moyak/issues">
-      <img src="https://img.shields.io/github/issues/your-username/moyak" alt="Issues">
+    <a href="https://github.com/nara9yo/moyak/issues">
+      <img src="https://img.shields.io/github/issues/nara9yo/moyak" alt="Issues">
     </a>
   </p>
 </div> 

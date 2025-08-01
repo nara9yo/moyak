@@ -41,4 +41,4 @@ fi
 echo "🎉 MOYAK 초기화 완료!"
 echo "📧 관리자 계정: admin@moyak.com / admin123"
 echo "�� 테스트 계정: user@moyak.com / user123"
-echo "🌐 접속 URL: http://your-synology-ip:5434"
+echo "🌐 접속 URL: http://your-service-ip:5434"
