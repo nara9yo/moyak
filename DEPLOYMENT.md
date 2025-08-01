@@ -38,6 +38,7 @@ EMAIL_USER: your_actual_email@gmail.com
 EMAIL_PASS: your_actual_app_password
 
 # 시놀로지 IP 주소로 변경
+REACT_APP_API_URL: http://your-service-ip:5434
 CLIENT_URL: http://your-service-ip:5434
 ```
 
