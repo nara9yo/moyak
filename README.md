@@ -34,8 +34,8 @@ https://github.com/user-attachments/assets/21d9d46f-9ff8-4f5f-8a5a-1298a50447ae
 - [라이선스](#-라이선스)
 
 
-## 🎥 View Demo
-https://moyak.abyo.synology.me
+## 🌐 View Demo
+<a href="https://moyak.abyo.synology.me" target="_blank" rel="noopener noreferrer">https://moyak.abyo.synology.me</a>
 
 ## 🚀 주요 기능
 
