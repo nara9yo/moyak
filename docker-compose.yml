@@ -25,7 +25,10 @@ services:
 
   # MOYAK 애플리케이션
   moyak-app:
-    build: .
+    build:
+      context: .
+      args:
+        REACT_APP_API_URL: http://your-service-ip:5434
     image: moyak-app:latest
     container_name: moyak-app
     environment:
