@@ -1,6 +1,9 @@
+<div align="center">
+  <img width="256" height="256" alt="Moyak Logo" src="https://github.com/user-attachments/assets/c4e4bd4c-beb9-4cfa-9953-ec19dd2c69c5" />
+</div>
+
 # MOYAK (모두의 약속) - 예약 스케줄링 플랫폼
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-22.17.0-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
@@ -8,9 +11,11 @@
 
 MOYAK은 Calendly와 유사한 예약 스케줄링 플랫폼입니다. 사용자가 이벤트를 생성하고 예약 링크를 공유하여 손쉽게 미팅을 예약할 수 있는 웹 애플리케이션입니다.
 
+https://github.com/user-attachments/assets/21d9d46f-9ff8-4f5f-8a5a-1298a50447ae
+
 ## 📋 목차
 
-- [데모 화면](#데모화면)
+- [View Demo](#-View-Demo)
 - [주요 기능](#-주요-기능)
 - [기술 스택](#️-기술-스택)
 - [프로젝트 구조](#-프로젝트-구조)
@@ -28,8 +33,9 @@ MOYAK은 Calendly와 유사한 예약 스케줄링 플랫폼입니다. 사용자
 - [기여하기](#-기여하기)
 - [라이선스](#-라이선스)
 
-## 🎥 데모화면
-https://github.com/user-attachments/assets/21d9d46f-9ff8-4f5f-8a5a-1298a50447ae
+
+## 🎥 View Demo
+https://moyak.abyo.synology.me
 
 ## 🚀 주요 기능
 
