@@ -109,9 +109,10 @@ router.post('/', [
       return res.status(400).json({ message: '해당 시간에 이미 예약이 있습니다.' });
     }
 
-    // 예약 생성
+    // 예약 생성 (user_id 추가)
     const booking = await Booking.create({
       event_id,
+      user_id: event.user.id, // 이벤트 호스트의 user_id 설정
       guest_name,
       guest_email,
       guest_phone,
